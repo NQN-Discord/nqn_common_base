@@ -4,7 +4,7 @@ from prometheus_client.core import GaugeMetricFamily, REGISTRY
 from aiohttp.web import Response
 
 
-def metrics_middleware(app_name):
+def metrics_middleware(app_name: str = "aiohttp"):
     request_latency = Histogram(
         "request_latency",
         "Latency of requests",
