@@ -1,7 +1,7 @@
 import time
 from prometheus_client import Histogram, Gauge
-from prometheus_client.core import GaugeMetricFamily, REGISTRY
 from aiohttp.web import Response
+from .metrics import register_metric
 
 
 def metrics_middleware(app_name: str = "aiohttp"):
@@ -19,24 +19,11 @@ def metrics_middleware(app_name: str = "aiohttp"):
     )
     buckets = set()
 
-    class MetricsHandler:
-        def __init__(self):
-            REGISTRY.register(self)
-
-        def collect(self):
-            g = GaugeMetricFamily(
-                f"{app_name}_request_max_time",
-                "How long has the longest request been running"
-            )
-            g.add_metric([], self.max_time())
-            yield g
-
-        def max_time(self):
-            if not buckets:
-                return 0
-            return time.time() - min(buckets)
-
-    max_time = MetricsHandler()
+    @register_metric("How long has the longest request been running", namespace=app_name)
+    def request_max_time():
+        if not buckets:
+            return 0
+        return time.time() - min(buckets)
 
     async def _outer(app, handler):
         async def _inner(request):
