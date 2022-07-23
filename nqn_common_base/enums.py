@@ -1,21 +1,11 @@
-from enum import IntFlag, auto
+from enum import IntEnum, auto
 
 
-class GuildStateUpdateType(IntFlag):
-    metadata = auto()
-    roles = auto()
-    channels = auto()
-    emojis = auto()
-    member = auto()
-
-
-GUILD_STATE_UPDATE_ALL = (
-    GuildStateUpdateType.metadata |
-    GuildStateUpdateType.roles |
-    GuildStateUpdateType.channels |
-    GuildStateUpdateType.emojis |
-    GuildStateUpdateType.member
-)
-
-# Guild update events don't contain channels or members
-GUILD_UPDATE_EVENT = GUILD_STATE_UPDATE_ALL & ~GuildStateUpdateType.channels & ~GuildStateUpdateType.member
+class GuildStateUpdateEvent(IntEnum):
+    guild_update = auto()
+    role_set = auto()
+    role_delete = auto()
+    channel_set = auto()
+    channel_delete = auto()
+    emojis_set = auto()
+    member_update = auto()
